@@ -2,6 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 import Link from "next/link"
 import Head from 'next/head'
+import Cookies from "js-cookie";
 
 export default function Login(){
     const [Email, setEmail] = useState('')

@@ -17,9 +17,9 @@ class CardEmployee extends React.Component{
                     </p>
                 </div>
                 <div className="flex items-center justify-end m-3">
-                    <Link href="/edit">
-                        <a className="bg-yellow-700 hover:bg-yellow-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
-                            Edit
+                    <Link href={`/Detail/${this.props.id}`}>
+                        <a className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+                            Detail
                         </a>
                     </Link>
                 </div>
