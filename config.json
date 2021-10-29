@@ -1,5 +1,5 @@
 {
-    "baseUrl": "http://myassignmnetapi.azurewebsites.net",
+    "baseUrl": "https://myassignmnetapi.azurewebsites.net",
     "LoginUrl" : "/api/Authentication/Login",
     "RegisUrl" : "/api/Authentication/Registration",
     "ResetPassUrl" : "/api/Authentication/ResetPassword",
