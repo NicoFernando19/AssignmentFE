@@ -1,7 +1,9 @@
+/* eslint eqeqeq: "off", curly: "error" */
 import axios from "axios";
 import { useState, useEffect } from "react";
 import Link  from "next/link";
 import Head from 'next/head'
+import config from "../../config"
 
 export default function ForgotPassword() {
     const [Email, setEmail] = useState('')
@@ -11,11 +13,14 @@ export default function ForgotPassword() {
     const [ErrorMessage, setErrorMessage] = useState('')
     const [ValidatePassword, setValidatePassword] = useState(true)
     
-    useEffect(() => {
+    function getValue(){
         const query = new URLSearchParams(window.location.search);
         setEmail(query.get('email'))
         setToken(query.get('token'))
-    });
+    }
+    useEffect(() => {
+        getValue();
+    }, [getValue]);
 
     const EmailHandler = async event => {
         setEmail(event.target.value)
@@ -44,7 +49,7 @@ export default function ForgotPassword() {
             confirmPassword: ConfirmPassword,
             token: Token
         }
-        await axios.put(`https://localhost:44374/api/Authentication/ResetPassword`, data, {
+        await axios.put(`${config.baseUrl}${config.ResetPassUrl}`, data, {
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -54,10 +59,24 @@ export default function ForgotPassword() {
                 setErrorMessage('')
             }
         ).catch(error => {
-            console.log(error.response)
-            // error.response.data.identityErrors.map(
-            //     err => setErrorMessage(err.description)
-            // )
+            if (error.response.data) {
+                if (error.response.data.identityErrors) {
+                    error.response.data.identityErrors.map(
+                        err => setErrorMessage(err.description)
+                    )
+                } else {
+                    if (error.response.data.errors.Password) {
+                        error.response.data.errors.Password.map(
+                            err => setErrorMessage(err)
+                        )
+                    }
+                    if (error.response.data.errors.ConfirmPassword){
+                        setErrorMessage(error.response.data.errors.ConfirmPassword[0])
+                    }
+                }
+            } else {
+                alert(error.response)
+            }
         })
     }
 

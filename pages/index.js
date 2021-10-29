@@ -1,8 +1,9 @@
+/* eslint eqeqeq: "off", curly: "error" */
 import axios from 'axios';
 import Head from 'next/head'
-import Image from 'next/image'
 import { useEffect, useState } from 'react';
 import Card from '../components/CardEmployee'
+import config from "../config"
 import { useRouter } from 'next/router'
 
 export default function Home() {
@@ -10,8 +11,7 @@ export default function Home() {
   const router = useRouter()
   
   useEffect(() => {
-    //use swr please!! after playing valo
-    axios.get('https://localhost:44374/api/Employees').then(response =>  {
+    axios.get(`${config.baseUrl}${config.EmployeeUrl}`).then(response =>  {
         setData(response.data)
     }).catch(err => {
       if (err.response.status == 401) {

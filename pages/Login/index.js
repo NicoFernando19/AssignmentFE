@@ -1,14 +1,18 @@
+/* eslint eqeqeq: "off", curly: "error" */
 import axios from "axios";
 import { useState } from "react";
 import Link from "next/link"
 import Head from 'next/head'
 import Cookies from "js-cookie";
+import config from "../../config"
+import { useRouter } from "next/router";
 
 export default function Login(){
     const [Email, setEmail] = useState('')
     const [Username, setUsername] = useState('')
     const [Password, setPassword] = useState('')
     const [ErrorMessage, setErrorMessage] = useState('')
+    const router = useRouter()
 
     const HandleSubmit = async event => {
         event.preventDefault()
@@ -17,15 +21,36 @@ export default function Login(){
             userName: Username,
             password: Password
         }
-        await axios.post('https://localhost:44374/api/Authentication/Login', data).then(
+        await axios.post(`${config.baseUrl}${config.LoginUrl}`, data).then(
             response => {
-                console.log(response)
+                Cookies.set('Email', response.data.email)
+                Cookies.set('Token', response.data.token)
+                Cookies.set('UserName', response.data.userName)
+                Cookies.set('Name', response.data.name)
                 setErrorMessage('')
+                router.push('/')
             }
         ).catch(error => {
-            error.response.data.identityErrors.map(
-                err => setErrorMessage(err.description)
-            )
+            if (error.response.data) {
+                if (error.response.data.identityErrors) {
+                    error.response.data.identityErrors.map(
+                        err => setErrorMessage(err.description)
+                    )
+                } else {
+                    if (error.response.data.errors.Password) {
+                        error.response.data.errors.Password.map(
+                            err => setErrorMessage(err)
+                        )
+                    }
+                    if (error.response.data.errors.Email) {
+                        error.response.data.errors.Email.map(
+                            err => setErrorMessage(err)
+                        )
+                    }
+                }
+            } else {
+                alert(error.response)
+            }
         })
 
     }
@@ -77,7 +102,7 @@ export default function Login(){
                     </div>
                     <div className="flex items-center mt-2 justify-center">
                         <span className="text-sm text-gray-300">
-                            Don't have account? <Link href="/Register"><a className="text-blue-400 hover:text-blue-600">Register</a></Link>
+                            Don&apos;t have account? <Link href="/Register"><a className="text-blue-400 hover:text-blue-600">Register</a></Link>
                         </span>
                     </div>
                 </form>

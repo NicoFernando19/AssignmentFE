@@ -1,7 +1,9 @@
+/* eslint eqeqeq: "off", curly: "error" */
 import axios from 'axios';
 import { useState } from 'react';
 import Link from 'next/link';
 import Head from 'next/head';
+import config from "../../config"
 
 export default function Register() {
     const [Email, setEmail] = useState('')
@@ -20,15 +22,33 @@ export default function Register() {
             password: Password,
             confirmPassword: ConfirmPassword
         }
-        await axios.post('https://localhost:44374/api/Authentication/Registration', data).then(
+        await axios.post(`${config.baseUrl}${config.RegisUrl}`, data).then(
             response => {
                 console.log(response)
                 setErrorMessage('')
             }
         ).catch(error => {
-            error.response.data.identityErrors.map(
-                err => setErrorMessage(err.description)
-            )
+            if (error.response.data) {
+                if (error.response.data.identityErrors) {
+                    error.response.data.identityErrors.map(
+                        err => setErrorMessage(err.description)
+                    )
+                } else {
+                    if (error.response.data.errors.Password) {
+                        error.response.data.errors.Password.map(
+                            err => setErrorMessage(err)
+                        )
+                    }
+                    if (error.response.data.errors.Email) {
+                        setErrorMessage(error.response.data.errors.Email[0])
+                    }
+                    if (error.response.data.errors.ConfirmPassword){
+                        setErrorMessage(error.response.data.errors.ConfirmPassword[0])
+                    }
+                }
+            } else {
+                alert(error.response)
+            }
         })
 
     }
@@ -56,6 +76,7 @@ export default function Register() {
 
     const ConfirmPasswordHandler = async event => {
         if(event.target.value != Password){
+            setConfirmPassword(event.target.value)
             setValidatePassword(false)
         }else{
             setConfirmPassword(event.target.value)
@@ -80,7 +101,7 @@ export default function Register() {
                         <label className="block text-gray-300 text-sm font-bold mb-2" >
                             Name
                         </label>
-                        <input className="shadow bg-white appearance-none border rounded w-full py-2 px-3 text-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="name" type="text" placeholder="Name" onChange={NameHandler} />
+                        <input className="shadow bg-white appearance-none border rounded w-full py-2 px-3 text-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="name" type="text" placeholder="Name" onChange={NameHandler} required />
                     </div>
                     <div className="mb-4">
                         <label className="block text-gray-300 text-sm font-bold mb-2" >

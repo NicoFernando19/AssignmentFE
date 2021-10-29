@@ -1,7 +1,9 @@
+/* eslint eqeqeq: "off", curly: "error" */
 import axios from "axios";
 import { useState } from "react";
 import Link  from "next/link";
 import Head from 'next/head';
+import config from "../../config"
 
 export default function ForgotPassword() {
     const [Email, setEmail] = useState('')
@@ -26,15 +28,20 @@ export default function ForgotPassword() {
         const data = {
             email: Email
         }
-        await axios.post('https://localhost:44374/api/Authentication/ResetPassword/sendEmail', data).then(
+        await axios.post(`${config.baseUrl}${config.ResetPassMailUrl}`, data).then(
             response => {
                 setEmailed(true)
                 setErrorMessage('')
             }
         ).catch(error => {
-            error.response.data.identityErrors.map(
-                err => setErrorMessage(err.description)
-            )
+            if (error.response.data.identityErrors) {
+                error.response.data.identityErrors.map(
+                    err => setErrorMessage(err.description)
+                )
+            }
+            if (error.response.data.errors) {
+                setErrorMessage(error.response.data.errors.Email[0])
+            }
         })
     }
 
