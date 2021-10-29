@@ -21,24 +21,32 @@ export default function Detail() {
     useEffect(() => {
         getToken();
         const {id} = router.query
-        if(!(id == '' || id == undefined || Token == null)){
-            axios.get(`${config.baseUrl}${config.EmployeeUrl}/${id}`, {
-                headers: {
-                    'Authorization': `Bearer ${Token}`
-                }
-            }).then(response =>  {
-                setData(response.data)
-            }).catch(err => {
-                if (err.response.status == 401) {
-                    Cookies.remove('Email')
-                    Cookies.remove('Token')
-                    Cookies.remove('UserName')
-                    Cookies.remove('Name')
-                    router.push('/Login')
-                } else {
-                    
-                }
-            })
+        if(Cookies.get('Email') != null) {
+            if(!(id == '' || id == undefined || Token == null || Token == undefined)){
+                axios.get(`${config.baseUrl}${config.EmployeeUrl}/${id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${Token}`
+                    }
+                }).then(response =>  {
+                    setData(response.data)
+                }).catch(err => {
+                    if (err.response.status == 401) {
+                        Cookies.remove('Email')
+                        Cookies.remove('Token')
+                        Cookies.remove('UserName')
+                        Cookies.remove('Name')
+                        router.push('/Login')
+                    } else {
+                        
+                    }
+                })
+            }
+        }else{
+            Cookies.remove('Email')
+            Cookies.remove('Token')
+            Cookies.remove('UserName')
+            Cookies.remove('Name')
+            router.push('/Login')
         }
     }, [getToken])
 
@@ -59,7 +67,7 @@ export default function Detail() {
         })
     }
 
-    if (!(Data.name || Token == null)) {
+    if (!(Data.name || Token == null || Token == undefined)) {
         return(
             <div className="container mx-auto my-5 p-5">
                 <Head>
