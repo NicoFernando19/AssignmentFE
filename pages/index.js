@@ -35,7 +35,7 @@ export default function Home() {
       </div>
       <div className="m-6 grid grid-cols-4">
         {
-           Data.map((data, i) => <Card ImagePath={`https://localhost:44374/${data.imagePath}`} ImageName={data.imageName} Name={data.name} Address={data.address} id={data.id} key={i} /> )
+           Data.map((data, i) => <Card ImagePath={`${config.baseUrl}/${data.imagePath}`} ImageName={data.imageName} Name={data.name} Address={data.address} id={data.id} key={i} /> )
         }
       </div>
     </div>
