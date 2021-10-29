@@ -59,7 +59,7 @@ export default function Detail() {
         })
     }
 
-    if (!Data.name || Token == null) {
+    if (!(Data.name || Token == null)) {
         return(
             <div className="container mx-auto my-5 p-5">
                 <Head>
